@@ -9,7 +9,10 @@ from flask import Flask, request
 load_dotenv() # In Heroku, make sure values are set in config vars
 
 # Use bot token + socket handler
-slack_app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
+slack_app = App(
+    token=os.environ.get("SLACK_BOT_TOKEN"),
+    signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
+)
 
 # Respond to hello message
 @slack_app.message("hello")
