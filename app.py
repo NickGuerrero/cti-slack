@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 from slack_bolt import App
-# from slack_bolt.adapter.socket_mode import SocketModeHandler
+from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_bolt.adapter.flask import SlackRequestHandler
 from flask import Flask, request
 
@@ -27,3 +27,9 @@ handler = SlackRequestHandler(slack_app)
 @flask_app.route("/slack/events", methods=["POST"])
 def slack_events():
     return handler.handle(request)
+
+# Conditional launcher
+if __name__ == "__main__" and os.environ.get("SLACK_APP_TOKEN"):
+    # Development: Use SocketMode
+    SocketModeHandler(slack_app, os.environ.get("SLACK_APP_TOKEN")).start()
+
