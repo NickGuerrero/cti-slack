@@ -56,8 +56,8 @@ def build_home_view(
             text=MarkdownTextObject(
                 text=(
                     "*Registered Emails*\n\n"
-                    "*Primary Email:* guerreronicolas1872@gmail.com\n"
-                    "*Alternative Emails:* nicolas.guerrero@sjsu.edu, nicguerrero@csumb.edu"
+                    "*Primary Email:* primary.email@gmail.com\n"
+                    "*Alternative Emails:* temp@email.edu, temp.edu@email.edu"
                 )
             )
         ),
