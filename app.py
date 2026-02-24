@@ -22,8 +22,6 @@ register_listeners(slack_app)
 
 # Flask Handler Set-Up
 flask_app = Flask(__name__)
-init_logger(flask_app.logger)  # Use same JSON logger for Flask logs
-
 handler = SlackRequestHandler(slack_app)
 
 @flask_app.route("/slack/events", methods=["POST"])
