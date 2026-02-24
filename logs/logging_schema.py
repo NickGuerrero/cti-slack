@@ -84,6 +84,11 @@ class Flow:
         )
 
     def mark_acked(self, ack_start_ms: int) -> None:
+        """
+        Call this when ack() is called to track ack latency separately from total duration.
+
+        This is useful because ack latency is often a proxy for Slack retries (if ack is slow, Slack may retry the event, causing duplicate processing).
+        """
         self.ack_latency_ms = int(time.time() * 1000) - ack_start_ms
 
     def duration_ms(self) -> int:
