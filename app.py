@@ -28,7 +28,7 @@ handler = SlackRequestHandler(slack_app)
 def slack_events():
     return handler.handle(request)
 
-@flask_app.route("slack/interactions", methods=["POST"])
+@flask_app.route("/slack/interactions", methods=["POST"])
 def slack_interactions():
     return handler.handle(request)
 
