@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 from slack_sdk.models.views import View
@@ -28,6 +29,7 @@ def build_home_view(
 ) -> View:
     display_middle = f" '{student_info['pname']}'" if student_info.get("pname") else ""
     student_name = f"{student_info['fname']}{display_middle} {student_info['lname']}"
+    last_updated = datetime.datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
     blocks: List[Block] = [
         # Student Information Section
@@ -40,11 +42,21 @@ def build_home_view(
                 MarkdownTextObject(text=f"*Join Date:* {join_date}"),
             ]
         ),
+        SectionBlock(
+            fields=[
+                MarkdownTextObject(text=f"_Last Updated:_ {last_updated}"),
+            ]
+        ),
         ActionsBlock(
             elements=[
                 ButtonElement(
                     text=PlainTextObject(text="View Student Information"),
                     action_id="view_student_info",
+                    value=student_id,
+                ),
+                ButtonElement(
+                    text=PlainTextObject(text=":arrows_counterclockwise: Refresh"),
+                    action_id="handle_refresh",
                     value=student_id,
                 )
             ]
