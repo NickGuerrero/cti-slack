@@ -1,9 +1,12 @@
-import datetime
+import time
+
 from typing import List
 
 from slack_sdk.models.views import View
 from slack_sdk.models.blocks import (
     Block,
+    HeaderBlock,
+    ImageElement,
     SectionBlock,
     DividerBlock,
     ActionsBlock,
@@ -11,6 +14,7 @@ from slack_sdk.models.blocks import (
 )
 from slack_sdk.models.blocks.basic_components import MarkdownTextObject, PlainTextObject
 from slack_sdk.models.blocks.block_elements import ButtonElement
+
 
 def build_error_home_view() -> View:
     return View(
@@ -22,41 +26,34 @@ def build_error_home_view() -> View:
         ]
     )
 
+
 def build_home_view(
         student_info: dict,
         join_date: str,
-        student_id: str
+        student_id: str,
 ) -> View:
     display_middle = f" '{student_info['pname']}'" if student_info.get("pname") else ""
-    student_name = f"{student_info['fname']}{display_middle} {student_info['lname']}"
-    last_updated = datetime.datetime.now().strftime("%B %d, %Y at %I:%M %p")
+    student_name = f"*{student_info['fname']}{display_middle} {student_info['lname']}*"
+    last_updated = int(time.time())
 
     blocks: List[Block] = [
+        HeaderBlock(text=PlainTextObject(text="CTI Student Dashboard")),
+
         # Student Information Section
         SectionBlock(
-            text=MarkdownTextObject(text=f"*CTI Student:* {student_name}")
+            text=MarkdownTextObject(text=f":bust_in_silhouette: {student_name}")
         ),
         SectionBlock(
             fields=[
-                MarkdownTextObject(text=f"*Target Year:* {student_info['target_year']}"),
-                MarkdownTextObject(text=f"*Join Date:* {join_date}"),
-            ]
-        ),
-        SectionBlock(
-            fields=[
-                MarkdownTextObject(text=f"_Last Updated:_ {last_updated}"),
-            ]
+                MarkdownTextObject(text=f":date: *Target Year:* {student_info['target_year']}"),
+                MarkdownTextObject(text=f":spiral_calendar_pad: *Join Date:* {join_date}"),
+            ],
         ),
         ActionsBlock(
             elements=[
                 ButtonElement(
                     text=PlainTextObject(text="View Student Information"),
                     action_id="view_student_info",
-                    value=student_id,
-                ),
-                ButtonElement(
-                    text=PlainTextObject(text=":arrows_counterclockwise: Refresh"),
-                    action_id="handle_refresh",
                     value=student_id,
                 )
             ]
@@ -67,7 +64,7 @@ def build_home_view(
         SectionBlock(
             text=MarkdownTextObject(
                 text=(
-                    "*Registered Emails*\n\n"
+                    ":email: *Registered Emails*\n\n"
                     "*Primary Email:* primary.email@gmail.com\n"
                     "*Alternative Emails:* temp@email.edu, temp.edu@email.edu"
                 )
@@ -88,13 +85,13 @@ def build_home_view(
         SectionBlock(
             text=MarkdownTextObject(
                 text=(
-                    "*Attendance*\n"
-                    "Sessions attended this year: *20*\n"
+                    ":chart_with_upwards_trend: *Attendance & Interactions*\n"
+                    "Sessions Attended This Year: *20*\n\n"
                     "*Last Sessions Attended*\n"
-                    "• October 31, 2025 (40% Interactions)\n"
-                    "• November 6, 2025 (80% Interactions)\n"
-                    "• November 14, 2025 (60% Interactions)"
-                )
+                    "• October 31, 2025: :large_yellow_circle: 40%\n"
+                    "• November 6, 2025: :large_green_circle: 80%\n"
+                    "• November 14, 2025: :large_yellow_circle: 60%"
+                ),
             )
         ),
         ActionsBlock(
@@ -110,12 +107,21 @@ def build_home_view(
 
         # Badges Section
         SectionBlock(
-            text=MarkdownTextObject(text="*Badge Progress* _(TODO: ignore for now)_")
+            text=MarkdownTextObject(text="*Badge Progress*")
         ),
-        ImageBlock(
-            image_url="https://picsum.photos/200",
-            alt_text="Badge progress row",
-        ),
+        # NOTE -- leaving these out for now as we don't have badge data nor can they be formatted side-by-side without an external library
+        # ImageBlock(
+        #     image_url="https://picsum.photos/100",
+        #     alt_text="Badge progress row",
+        # ),
+        # ImageBlock(
+        #     image_url="https://picsum.photos/100",
+        #     alt_text="Badge progress row",
+        # ),
+        # ImageBlock(
+        #     image_url="https://picsum.photos/100",
+        #     alt_text="Badge progress row",
+        # ),
         ActionsBlock(
             elements=[
                 ButtonElement(
@@ -125,6 +131,24 @@ def build_home_view(
                 )
             ]
         ),
+
+        DividerBlock(),
+
+        # Footer with last updated timestamp
+        SectionBlock(
+            fields=[
+                MarkdownTextObject(text=f"*Last Updated:* <!date^{last_updated}^{{date_pretty}} at {{time}}|{time.ctime(last_updated)} UTC>"),
+            ]
+        ),
+        ActionsBlock(
+            elements=[
+                ButtonElement(
+                    text=PlainTextObject(text=":arrows_counterclockwise: Refresh"),
+                    action_id="handle_refresh",
+                    value=student_id,
+                )
+            ]
+        )
     ]
 
     return View(type="home", blocks=blocks)

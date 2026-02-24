@@ -1,4 +1,3 @@
-import json
 import logging
 
 from flask import Flask, request
@@ -8,26 +7,10 @@ from slack_bolt.adapter.flask import SlackRequestHandler
 
 from config import Config
 from listeners import register_listeners
+from logs.logger import init_logger
 
-class JSONFormatter(logging.Formatter):
-    def format(self, record):
-        log_data = {
-            'timestamp': self.formatTime(record),
-            'name': record.name,
-            'level': record.levelname,
-        }
-        if isinstance(record.msg, dict):
-            log_data.update(record.msg)
-        else:
-            log_data['message'] = record.getMessage()
-        return json.dumps(log_data)
 
-# Configure logging with JSON formatter
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler()
-handler.setFormatter(JSONFormatter())
-logger.addHandler(handler)
+init_logger(logging.getLogger())
 
 # Use bot token + socket handler
 slack_app = App(
