@@ -28,6 +28,10 @@ handler = SlackRequestHandler(slack_app)
 def slack_events():
     return handler.handle(request)
 
+@flask_app.route("slack/interactions", methods=["POST"])
+def slack_interactions():
+    return handler.handle(request)
+
 # Conditional launcher
 if __name__ == "__main__" and Config.slack_app_token:
     # Development: Use SocketMode
