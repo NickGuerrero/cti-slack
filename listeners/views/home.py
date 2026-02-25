@@ -34,6 +34,8 @@ def build_home_view(
 ) -> View:
     display_middle = f" '{student_info['pname']}'" if student_info.get("pname") else ""
     student_name = f"*{student_info['fname']}{display_middle} {student_info['lname']}*"
+    alternate_emails = student_info.get("alternate_emails", [])
+    alternate_emails_text = ", ".join(alternate_emails) if alternate_emails else "N/A"
     last_updated = int(time.time())
 
     blocks: List[Block] = [
@@ -65,8 +67,8 @@ def build_home_view(
             text=MarkdownTextObject(
                 text=(
                     ":email: *Registered Emails*\n\n"
-                    "*Primary Email:* primary.email@gmail.com\n"
-                    "*Alternative Emails:* temp@email.edu, temp.edu@email.edu"
+                    f"*Primary Email:* {student_info.get('primary_email', 'N/A')}\n"
+                    f"*Alternative Emails:* {alternate_emails_text}"
                 )
             )
         ),
