@@ -32,8 +32,8 @@ def handle_update_emails(ack: Ack, body: dict, client: WebClient, logger: Logger
         user_email = profile.get("email", "")
         student_info = get_student_info(user_email)
 
-        primary_email = student_info.get("primary_email", user_email)
-        alternate_emails = student_info.get("alternate_emails", []) if student_info.get("alternate_emails") else []
+        primary_email = student_info.get("primary_email", user_email).lower()
+        alternate_emails = [e.lower() for e in student_info.get("alternate_emails", []) or []]
 
         client.views_open(
             trigger_id=body["trigger_id"],
@@ -83,12 +83,13 @@ def handle_add_email(ack: Ack, body: dict, client: WebClient, logger: Logger):
 
     metadata = json.loads(body["view"]["private_metadata"])
     state_values = body["view"]["state"]["values"]
-    new_email = (
+    raw_email = (
         state_values
         .get("email_input_block", {})
         .get("email_input_value", {})
         .get("value")
     )
+    new_email = raw_email.lower() if raw_email else None
 
     alternate_emails = metadata["alternate_emails"]
     if new_email and new_email not in alternate_emails and new_email != metadata["primary_email"]:
